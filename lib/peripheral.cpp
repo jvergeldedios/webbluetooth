@@ -724,16 +724,15 @@ void Peripheral::onDisconnected(simpleble_peripheral_t, void *userdata) {
   peripheral->onDisconnectedFn.NonBlockingCall(callback);
 }
 
-void Peripheral::onNotify(simpleble_uuid_t service,
-                          simpleble_uuid_t characteristic, const uint8_t *data,
-                          size_t data_length, void *userdata) {
+void Peripheral::onNotify(simpleble_peripheral_t handle, simpleble_uuid_t service,
+                         simpleble_uuid_t characteristic, const uint8_t *data,
+                         size_t data_length, void *userdata) {
   auto peripheral = reinterpret_cast<Peripheral *>(userdata);
   std::vector<uint8_t> vecData(data, data + data_length);
   auto callback = [vecData](Napi::Env env, Napi::Function jsCallback) {
     auto arrayBuffer = Napi::ArrayBuffer::New(env, vecData.size());
     std::memcpy(arrayBuffer.Data(), vecData.data(), vecData.size());
-    auto uint8Array =
-        Napi::Uint8Array::New(env, vecData.size(), arrayBuffer, 0);
+    auto uint8Array = Napi::Uint8Array::New(env, vecData.size(), arrayBuffer, 0);
     jsCallback.Call({uint8Array});
   };
 
@@ -742,17 +741,15 @@ void Peripheral::onNotify(simpleble_uuid_t service,
     it->second.NonBlockingCall(callback);
 }
 
-void Peripheral::onIndicate(simpleble_uuid_t service,
-                            simpleble_uuid_t characteristic,
-                            const uint8_t *data, size_t data_length,
-                            void *userdata) {
+void Peripheral::onIndicate(simpleble_peripheral_t handle, simpleble_uuid_t service,
+                           simpleble_uuid_t characteristic, const uint8_t *data,
+                           size_t data_length, void *userdata) {
   auto peripheral = reinterpret_cast<Peripheral *>(userdata);
   std::vector<uint8_t> vecData(data, data + data_length);
   auto callback = [vecData](Napi::Env env, Napi::Function jsCallback) {
     auto arrayBuffer = Napi::ArrayBuffer::New(env, vecData.size());
     std::memcpy(arrayBuffer.Data(), vecData.data(), vecData.size());
-    auto uint8Array =
-        Napi::Uint8Array::New(env, vecData.size(), arrayBuffer, 0);
+    auto uint8Array = Napi::Uint8Array::New(env, vecData.size(), arrayBuffer, 0);
     jsCallback.Call({uint8Array});
   };
 
